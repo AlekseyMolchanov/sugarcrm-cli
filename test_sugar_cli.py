@@ -23,13 +23,13 @@ def run_command(session, cmd):
     return handler.run()
     
 
-# def test_connect(state, session):
-#     assert state
-#     assert session
+def test_connect(state, session):
+    assert state
+    assert session
 
 
-# def test_account_not_has_account_type_cli(state, session):
-#     assert not run_command(session, 'account show --account_type cli')
+def test_account_not_has_account_type_cli(state, session):
+    assert not run_command(session, 'account show --account_type cli')
 
 
 def test_account_create(state, session):
@@ -50,19 +50,19 @@ def test_account_create(state, session):
     state['account'] = obj
 
 
-# def test_search_account_by_params(state, session):
-#     assert run_command(session, 'account show --account_type cli')
-#     assert run_command(session, 'account show --industry Home')
+def test_search_account_by_params(state, session):
+    assert run_command(session, 'account show --account_type cli')
+    assert run_command(session, 'account show --industry Home')
 
 
-# def test_get_account_by_id(state, session):
-#     _id = state.get('account').id
-#     assert run_command(session, 'account get --id %s' % _id)
+def test_get_account_by_id(state, session):
+    _id = state.get('account').id
+    assert run_command(session, 'account get --id %s' % _id)
 
 
-# def test_get_account_by_unreal_id(session):
-#     with pytest.raises(ValueError, match=r'Not found .*'):
-#         run_command(session, 'account delete --id unreal-id')
+def test_get_account_by_unreal_id(session):
+    with pytest.raises(ValueError, match=r'Not found .*'):
+        run_command(session, 'account delete --id unreal-id')
 
 
 def test_update_account_by_id(state, session):
