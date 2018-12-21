@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "/Users/m/.virtualenvs/UW_RidaAyed_Sugarcrm/bin/python",
+    "files.exclude": {
+        "**/*.pyc": true,
+        ".pytest_cache": true,
+        "__pycache__": true
+    }
+}
