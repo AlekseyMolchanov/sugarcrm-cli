@@ -18,10 +18,10 @@ def session(request):
 
 
 def run_command(session, cmd):
-    namespace, args = parse_args(cmd if type(cmd) is list else cmd.split(' ') )
+    namespace, args = parse_args(cmd if type(cmd) is list else cmd.split(' '))
     handler = namespace.func(args, action=namespace.action, session=session)
     return handler.run()
-    
+
 
 def test_connect(state, session):
     assert state
@@ -41,9 +41,9 @@ def test_account_create(state, session):
         '--account_type', 'cli',
         '--name', 'Some name',
         '--industry', 'Home',
-        '--phone_office','+4234234234',
-        '--billing_address_city','Moscow',
-        '--billing_address_street','red square 1',
+        '--phone_office', '+4234234234',
+        '--billing_address_city', 'Moscow',
+        '--billing_address_street', 'red square 1',
     ]
     obj = run_command(session, cmd)
     assert obj
@@ -68,7 +68,8 @@ def test_get_account_by_unreal_id(session):
 def test_update_account_by_id(state, session):
     new_name = 'New Name'
     _id = state.get('account').id
-    assert run_command(session, ['account', 'update','--name', new_name, '--id', _id])
+    cmd = ['account', 'update', '--name', new_name, '--id', _id]
+    assert run_command(session, cmd)
     obj = run_command(session, 'account get --id %s' % _id)
     assert obj.name == new_name
 
@@ -104,7 +105,8 @@ def test_get_contact_by_id(state, session):
 def test_update_contact_by_id(state, session):
     first_name = 'Molchanov'
     _id = state.get('contact').id
-    assert run_command(session, ['contact', 'update','--first_name', first_name, '--id', _id])
+    assert run_command(
+        session, ['contact', 'update', '--first_name', first_name, '--id', _id])
     obj = run_command(session, 'contact get --id %s' % _id)
     assert obj.first_name == first_name
 
@@ -112,16 +114,8 @@ def test_update_contact_by_id(state, session):
 def test_contact_delete(state, session):
     _id = state.get('contact').id
     assert run_command(session, 'contact delete --id %s' % _id)
-    
-    
+
+
 def test_account_delete(state, session):
     _id = state.get('account').id
     assert run_command(session, 'account delete --id %s' % _id)
-    
-    
-
-
-    
-
-
-    
