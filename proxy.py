@@ -20,7 +20,7 @@ class Proxy(object):
         namespace = self.parse_args()
         _params = vars(namespace)
         params = {}
-        for k, v in _params.iteritems():
+        for k, v in _params.items():
             if not(v is None):
                 params[k] = v
         return getattr(self, self.action)(params)
@@ -38,16 +38,16 @@ class Proxy(object):
             '--id', type=str, help='object giud', required=True)
 
         show = subparsers.add_parser('show')
-        for param, options in self.schema.iteritems():
+        for param, options in self.schema.items():
             show.add_argument('--{}'.format(param), required=False)
 
         update = subparsers.add_parser('update')
-        for param, options in self.schema.iteritems():
+        for param, options in self.schema.items():
             argument_settings = dict(required=('update' in options['required_in']))
             update.add_argument('--{}'.format(param), **argument_settings)
 
         create = subparsers.add_parser('create')
-        for param, options in self.schema.iteritems():
+        for param, options in self.schema.items():
             argument_settings = dict(required=('create' in options['required_in']))
             create.add_argument('--{}'.format(param), **argument_settings)
 
@@ -82,6 +82,7 @@ class Proxy(object):
         obj = self.cls(**params)
         result = self.session.set_entry(obj)
         self.pprint(result)
+        return result
 
     @log
     def get(self, params):
@@ -103,10 +104,12 @@ class Proxy(object):
         update by id
         ./sugar_cli.py account update --billing_address_postalcode 123 --id  b3746d3b-5582-e09b-a01e-5c1b571b0147
         '''
+        pprint.pprint(params)
+        
         _id = params.get('id')
         current = self.session.get_entry(self.cls.module, _id)
         if current:
-            for key, value in params.iteritems():
+            for key, value in params.items():
                 setattr(current, key, value)
             current = self.session.set_entry(current)
             return current
@@ -124,7 +127,7 @@ class Proxy(object):
         if current:
             current.deleted = True
             current = self.session.set_entry(current)
-            return current
+            return True
         else:
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
         self.pprint(current)
@@ -152,7 +155,7 @@ class Proxy(object):
                         action='cascade_delete', session=self.session)
                     rel.cascade_delete(dict(id=link.id))
 
-            return current
+            return True
 
         else:
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))

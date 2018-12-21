@@ -19,6 +19,7 @@ schema = dict(
     salutation=dict(required_in=['create']),
     email1=dict(required_in=['create']),
     id=dict(required_in=['get', 'update', 'delete', 'cascade_delete']),
+    account_id=dict(required_in=['create']),
 )
 
 

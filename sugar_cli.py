@@ -22,7 +22,7 @@ def parse_args(args=[]):
     parser = argparse.ArgumentParser(prog='sugar_cli')
     subparsers = parser.add_subparsers()
 
-    for module, proxy in MODULES.iteritems():
+    for module, proxy in MODULES.items():
         sp = subparsers.add_parser(module)
         choices = ['show', 'get', 'create', 'update', 'delete']
         sp.add_argument('action', type=str,

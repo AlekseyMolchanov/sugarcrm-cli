@@ -9,6 +9,7 @@ from contacts import ContactProxy
 schema = dict(
     account_type=dict(help='type of account', required_in=['create']),
     name=dict(help='Name of account', required_in=['create']),
+    billing_address_country=dict(required_in=[]),
     billing_address_street=dict(required_in=['create']),
     billing_address_postalcode=dict(required_in=['create']),
     billing_address_city=dict(required_in=['create']),
