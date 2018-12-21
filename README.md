@@ -2,7 +2,7 @@
 
 # Usage
   
-  ./sugar_cli <module> <action> (--params ...... +)
+  ./sugar_cli {module} {action} (--params ...... +)
   
   Modules:
   
