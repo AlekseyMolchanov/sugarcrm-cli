@@ -10,7 +10,8 @@
   Modules:
   
     * Account
-    * Contact    
+    * Contact  
+    * Meeting  
   
   Actions:
     

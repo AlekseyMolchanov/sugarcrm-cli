@@ -4,6 +4,7 @@
 from proxy import Proxy
 from sugarcrm import Account
 from contacts import ContactProxy
+from meetings import MeetingProxy
 
 
 schema = dict(
@@ -22,4 +23,4 @@ schema = dict(
 class AccountProxy(Proxy):
     cls = Account
     schema = schema
-    relations = [ContactProxy]
+    relations = [ContactProxy, MeetingProxy]

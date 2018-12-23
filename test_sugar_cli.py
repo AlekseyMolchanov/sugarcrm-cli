@@ -23,12 +23,17 @@ def run_command(session, cmd):
     return handler.run()
 
 
+def _test_get_module_fields(state, session):
+    from pprint import pprint 
+    pprint (session.get_module_fields('Meetings')['module_fields'])
+
+
 def test_connect(state, session):
     assert state
     assert session
 
 
-def test_account_not_has_account_type_cli(state, session):
+def test_account_not_has_account_with_type_cli(state, session):
     assert not run_command(session, 'account show --account_type cli')
 
 
@@ -111,11 +116,39 @@ def test_update_contact_by_id(state, session):
     assert obj.first_name == first_name
 
 
+def test_meeting_create_for_account(state, session):
+    cmd = [
+        'meeting',
+        'create',
+        '--name', 'one',
+        '--description', 'description one',
+        '--date_start', '2018-12-23T12:00:00-00:00',
+        '--date_end', '2018-12-23T13:00:00-00:00',
+        '--parent_id', state.get('account').id,
+        '--parent_type', state.get('account').module
+    ]
+    obj = run_command(session, cmd)
+    assert obj
+    state['meeting'] = obj
+
 def test_contact_delete(state, session):
     _id = state.get('contact').id
     assert run_command(session, 'contact delete --id %s' % _id)
 
-
 def test_account_delete(state, session):
     _id = state.get('account').id
     assert run_command(session, 'account delete --id %s' % _id)
+
+def test_account_meeting(state, session):
+    _id = state.get('meeting').id
+    assert run_command(session, 'meeting delete --id %s' % _id)
+
+def test_account_cascade_delete(state, session):
+    test_account_create(state, session)
+    test_contact_create(state, session)
+    test_meeting_create_for_account(state, session)
+
+    _id = state.get('account').id
+    assert run_command(session, 'account cascade_delete --id %s' % _id)
+
+

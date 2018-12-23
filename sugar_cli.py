@@ -7,27 +7,27 @@ import argparse
 from connection import connect
 from accounts import AccountProxy
 from contacts import ContactProxy
+from meetings import MeetingProxy
 
 
 MODULES = {
     'account': AccountProxy,
     'contact': ContactProxy,
     'call': None,
-    'meeting': None,
+    'meeting': MeetingProxy,
     'opportunitie': None
 }
 
 
-def parse_args(args=[]):
+def parse_args(args=None):
     parser = argparse.ArgumentParser(prog='sugar_cli')
     subparsers = parser.add_subparsers()
-
     for module, proxy in MODULES.items():
-        sp = subparsers.add_parser(module)
-        choices = ['show', 'get', 'create', 'update', 'delete']
-        sp.add_argument('action', type=str,
-                        help='Sugar CRM model action', choices=choices)
-        sp.set_defaults(func=proxy)
+        if proxy:
+            sp = subparsers.add_parser(module)
+            choices = ['show', 'get', 'create', 'update', 'delete', 'cascade_delete']
+            sp.add_argument('action', type=str, help='Sugar CRM model action', choices=choices)
+            sp.set_defaults(func=proxy)
 
     return parser.parse_known_args(args=args)
 
@@ -35,6 +35,7 @@ def parse_args(args=[]):
 if __name__ == "__main__":
     session = connect()
     namespace, args = parse_args()
+    print(namespace, args)
     handler = namespace.func(args, action=namespace.action, session=session)
     try:
         exit(handler.run())

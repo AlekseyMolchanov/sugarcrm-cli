@@ -34,8 +34,10 @@ class Proxy(object):
         get.add_argument('--id', type=str, help='object giud', required=True)
 
         delete = subparsers.add_parser('delete')
-        delete.add_argument(
-            '--id', type=str, help='object giud', required=True)
+        delete.add_argument( '--id', type=str, help='object giud for delete', required=True)
+        
+        cascade_delete = subparsers.add_parser('cascade_delete')
+        cascade_delete.add_argument( '--id', type=str, help='object giud for cascade delete', required=True)
 
         show = subparsers.add_parser('show')
         for param, options in self.schema.items():
@@ -103,9 +105,7 @@ class Proxy(object):
         '''
         update by id
         ./sugar_cli.py account update --billing_address_postalcode 123 --id  b3746d3b-5582-e09b-a01e-5c1b571b0147
-        '''
-        pprint.pprint(params)
-        
+        '''        
         _id = params.get('id')
         current = self.session.get_entry(self.cls.module, _id)
         if current:
@@ -115,12 +115,13 @@ class Proxy(object):
             return current
         else:
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
-        self.pprint(current)
+        
 
     @log
     def delete(self, params):
         '''
-
+        delete by id
+        ./sugar_cli.py account delete --id=a3a0f97a-749d-f1a6-9a08-5bf5d7d63de1
         '''
         _id = params.get('id')
         current = self.session.get_entry(self.cls.module, _id)
@@ -130,32 +131,30 @@ class Proxy(object):
             return True
         else:
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
-        self.pprint(current)
 
     @log
     def cascade_delete(self, params):
         '''
-
+        cascade delete by id
+        ./sugar_cli.py account cascade_delete --id=a3a0f97a-749d-f1a6-9a08-5bf5d7d63de1
         '''
         _id = params.get('id')
         current = self.session.get_entry(self.cls.module, _id)
         if current:
-            current.deleted = True
-            current = self.session.set_entry(current)
-
-            for relation in self.cls.relations:
+            for relation in self.relations:
 
                 link = dict()
                 link[relation.cls.module] = ['id']
-                linked = self.session.get_entry(
-                    self.cls.module, current.id, links=link)
-
-                for link in getattr(linked, relation.cls.module.lower()):
-                    rel = relation.cls(
-                        action='cascade_delete', session=self.session)
-                    rel.cascade_delete(dict(id=link.id))
-
+                linked = self.session.get_entry(self.cls.module, current.id, links=link)
+                if linked:
+                    if hasattr(linked, relation.cls.module.lower()):
+                        for link in getattr(linked, relation.cls.module.lower()):
+                            rel = relation(None, action='cascade_delete', session=self.session)
+                            rel.cascade_delete(dict(id=link.id))
+            
+            current.deleted = True
+            current = self.session.set_entry(current)
             return True
-
+            
         else:
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
