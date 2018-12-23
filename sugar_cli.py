@@ -8,12 +8,13 @@ from connection import connect
 from accounts import AccountProxy
 from contacts import ContactProxy
 from meetings import MeetingProxy
+from calls import CallProxy
 
 
 MODULES = {
     'account': AccountProxy,
     'contact': ContactProxy,
-    'call': None,
+    'call': CallProxy,
     'meeting': MeetingProxy,
     'opportunitie': None
 }

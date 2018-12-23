@@ -23,9 +23,9 @@ def run_command(session, cmd):
     return handler.run()
 
 
-def _test_get_module_fields(state, session):
-    from pprint import pprint 
-    pprint (session.get_module_fields('Meetings')['module_fields'])
+def ___test_get_module_fields(state, session):
+    from pprint import pprint
+    pprint(session.get_module_fields('Calls')['module_fields'])
 
 
 def test_connect(state, session):
@@ -131,17 +131,41 @@ def test_meeting_create_for_account(state, session):
     assert obj
     state['meeting'] = obj
 
+
+def test_call_create_for_contact(state, session):
+    cmd = [
+        'call',
+        'create',
+        '--name', 'one call to %s %s' % (state.get('contact').first_name,
+                                         state.get('contact').last_name),
+        '--date_start', '2018-12-23T12:00:00-00:00',
+        '--parent_id', state.get('contact').id,
+        '--parent_type', state.get('contact').module
+    ]
+    obj = run_command(session, cmd)
+    assert obj
+    state['call'] = obj
+
+
 def test_contact_delete(state, session):
     _id = state.get('contact').id
     assert run_command(session, 'contact delete --id %s' % _id)
+
 
 def test_account_delete(state, session):
     _id = state.get('account').id
     assert run_command(session, 'account delete --id %s' % _id)
 
-def test_account_meeting(state, session):
+
+def test_meeting_delete(state, session):
     _id = state.get('meeting').id
     assert run_command(session, 'meeting delete --id %s' % _id)
+
+
+def test_call_delete(state, session):
+    _id = state.get('call').id
+    assert run_command(session, 'call delete --id %s' % _id)
+
 
 def test_account_cascade_delete(state, session):
     test_account_create(state, session)
@@ -150,5 +174,3 @@ def test_account_cascade_delete(state, session):
 
     _id = state.get('account').id
     assert run_command(session, 'account cascade_delete --id %s' % _id)
-
-
