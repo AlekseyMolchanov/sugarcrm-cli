@@ -7,8 +7,8 @@ from sugarcrm import Session
 
 
 def connect():
-    url = os.environ['URL']
-    username = os.environ['USERNAME']
-    password = os.environ['PASSWORD']
+    url = os.environ['SUGAR_CRM_URL']
+    username = os.environ['SUGAR_CRM_USERNAME']
+    password = os.environ['SUGAR_CRM_PASSWORD']
     session = Session(url, username, password)
     return session
