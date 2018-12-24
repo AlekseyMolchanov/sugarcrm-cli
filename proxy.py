@@ -46,11 +46,15 @@ class Proxy(object):
         update = subparsers.add_parser('update')
         for param, options in self.schema.items():
             argument_settings = dict(required=('update' in options['required_in']))
+            if 'choices' in options:
+                argument_settings['choices'] = options['choices']
             update.add_argument('--{}'.format(param), **argument_settings)
 
         create = subparsers.add_parser('create')
         for param, options in self.schema.items():
             argument_settings = dict(required=('create' in options['required_in']))
+            if 'choices' in options:
+                argument_settings['choices'] = options['choices']
             create.add_argument('--{}'.format(param), **argument_settings)
 
         return parser.parse_args([self.action] + self.args)
@@ -58,7 +62,8 @@ class Proxy(object):
     def pprint(self, obj):
         data = dict()
         for key in self.schema:
-            data[key] = getattr(obj, key)
+            if hasattr(obj, key):
+                data[key] = getattr(obj, key)
         logger.debug(pprint.pformat(data, indent=4))
 
     @log

@@ -9,6 +9,7 @@ from accounts import AccountProxy
 from contacts import ContactProxy
 from meetings import MeetingProxy
 from calls import CallProxy
+from opportunity import OpportunityProxy
 
 
 MODULES = {
@@ -16,7 +17,7 @@ MODULES = {
     'contact': ContactProxy,
     'call': CallProxy,
     'meeting': MeetingProxy,
-    'opportunitie': None
+    'opportunity': OpportunityProxy
 }
 
 
@@ -26,8 +27,10 @@ def parse_args(args=None):
     for module, proxy in MODULES.items():
         if proxy:
             sp = subparsers.add_parser(module)
-            choices = ['show', 'get', 'create', 'update', 'delete', 'cascade_delete']
-            sp.add_argument('action', type=str, help='Sugar CRM model action', choices=choices)
+            choices = ['show', 'get', 'create',
+                       'update', 'delete', 'cascade_delete']
+            sp.add_argument('action', type=str,
+                            help='Sugar CRM model action', choices=choices)
             sp.set_defaults(func=proxy)
 
     return parser.parse_known_args(args=args)

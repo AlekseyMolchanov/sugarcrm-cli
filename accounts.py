@@ -6,22 +6,35 @@ from sugarcrm import Account
 from contacts import ContactProxy
 from meetings import MeetingProxy
 from calls import CallProxy
+from opportunity import OpportunityProxy
 
+account_type_choices = ['Analyst', 'Competitor', 'Customer', 'Integrator',
+                        'Investor', 'Other', 'Partner', 'Press', 'Prospect', 'Reseller']
+
+account_industry_choices = [
+    'Apparel','Banking','Biotechnology','Chemicals','Communications','Construction','Consulting','Education',
+    'Electronics','Energy','Engineering','Entertainment','Environmental','Finance','Government','Healthcare',
+    'Hospitality','Insurance','Machinery','Manufacturing','Media','Not For Profit','Other','Recreation',
+    'Retail','Shipping','Technology','Telecommunications','Transportation','Utilities'
+]
 
 schema = dict(
-    account_type=dict(help='type of account', required_in=['create']),
-    name=dict(help='Name of account', required_in=['create']),
-    billing_address_country=dict(required_in=[]),
-    billing_address_street=dict(required_in=['create']),
-    billing_address_postalcode=dict(required_in=['create']),
-    billing_address_city=dict(required_in=['create']),
-    phone_office=dict(required_in=['create']),
-    industry=dict(required_in=['create']),
-    id=dict(required_in=['get', 'update', 'delete', 'cascade_delete']),
+    account_type=dict(help='Type', required_in=[
+                      'create'], choices=account_type_choices),
+    name=dict(help='Account Name', required_in=['create']),
+    billing_address_country=dict(help='Billing Country', required_in=[]),
+    billing_address_street=dict(help='Billing Street', required_in=['create']),
+    billing_address_postalcode=dict(
+        help='Billing Postal Code', required_in=['create']),
+    billing_address_city=dict(help='Billing City', required_in=['create']),
+    phone_office=dict(help='Office Phone', required_in=['create']),
+    industry=dict(help='Industry', required_in=['create']),
+    id=dict(help='Account ID', required_in=[
+            'get', 'update', 'delete', 'cascade_delete']),
 )
 
 
 class AccountProxy(Proxy):
     cls = Account
     schema = schema
-    relations = [ContactProxy, MeetingProxy, CallProxy]
+    relations = [ContactProxy, MeetingProxy, CallProxy, OpportunityProxy]

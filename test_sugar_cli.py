@@ -23,9 +23,10 @@ def run_command(session, cmd):
     return handler.run()
 
 
-def ___test_get_module_fields(state, session):
+def __test_get_module_fields(state, session):
     from pprint import pprint
-    pprint(session.get_module_fields('Calls')['module_fields'])
+    pprint(session.get_module_fields('Accounts')['module_fields'])
+    exit()
 
 
 def test_connect(state, session):
@@ -33,8 +34,8 @@ def test_connect(state, session):
     assert session
 
 
-def test_account_not_has_account_with_type_cli(state, session):
-    assert not run_command(session, 'account show --account_type cli')
+def test_account_not_has_account_with_type_Other(state, session):
+    assert not run_command(session, 'account show --account_type Other')
 
 
 def test_account_create(state, session):
@@ -43,9 +44,9 @@ def test_account_create(state, session):
         'create',
         '--billing_address_postalcode', '1234',
         '--billing_address_country', 'Russia',
-        '--account_type', 'cli',
+        '--account_type', 'Other',
         '--name', 'Some name',
-        '--industry', 'Home',
+        '--industry', 'Other',
         '--phone_office', '+4234234234',
         '--billing_address_city', 'Moscow',
         '--billing_address_street', 'red square 1',
@@ -56,8 +57,8 @@ def test_account_create(state, session):
 
 
 def test_search_account_by_params(state, session):
-    assert run_command(session, 'account show --account_type cli')
-    assert run_command(session, 'account show --industry Home')
+    assert run_command(session, 'account show --account_type Other')
+    assert run_command(session, 'account show --industry Other')
 
 
 def test_get_account_by_id(state, session):
@@ -146,6 +147,18 @@ def test_call_create_for_contact(state, session):
     assert obj
     state['call'] = obj
 
+def test_opportunity_create_for_account(state, session):
+    cmd = [
+        'opportunity',
+        'create',
+        '--name', 'opportunity',
+        '--date_closed', '2018-12-23T12:00:00-00:00',
+        '--account_id', state.get('contact').id,
+        '--amount', '100500'
+    ]
+    obj = run_command(session, cmd)
+    assert obj
+    state['opportunity'] = obj
 
 def test_contact_delete(state, session):
     _id = state.get('contact').id
@@ -166,11 +179,16 @@ def test_call_delete(state, session):
     _id = state.get('call').id
     assert run_command(session, 'call delete --id %s' % _id)
 
+def test_opportunity_delete(state, session):
+    _id = state.get('opportunity').id
+    assert run_command(session, 'opportunity delete --id %s' % _id)
+
 
 def test_account_cascade_delete(state, session):
     test_account_create(state, session)
     test_contact_create(state, session)
     test_meeting_create_for_account(state, session)
+    test_opportunity_create_for_account(state, session)
 
     _id = state.get('account').id
     assert run_command(session, 'account cascade_delete --id %s' % _id)
