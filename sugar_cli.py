@@ -23,6 +23,7 @@ MODULES = {
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(prog='sugar_cli')
+
     subparsers = parser.add_subparsers()
     for module, proxy in MODULES.items():
         if proxy:
@@ -32,14 +33,17 @@ def parse_args(args=None):
             sp.add_argument('action', type=str,
                             help='Sugar CRM model action', choices=choices)
             sp.set_defaults(func=proxy)
-
-    return parser.parse_known_args(args=args)
+    namespace, args = parser.parse_known_args(args=args)
+    return parser, namespace, args
 
 
 if __name__ == "__main__":
     session = connect()
-    namespace, args = parse_args()
-    print(namespace, args)
+    parser, namespace, args = parse_args()
+    if not hasattr(namespace, 'func'):
+        parser.print_help()
+        exit(0)
+
     handler = namespace.func(args, action=namespace.action, session=session)
     try:
         exit(handler.run())

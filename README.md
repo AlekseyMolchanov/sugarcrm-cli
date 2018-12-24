@@ -20,7 +20,9 @@
 
 # Usage
   
-  ./sugar_cli {module} {action} (--params ...... +)
+  ./sugar_cli.py {account,contact,call,meeting,opportunity} \
+                 {show,get,create,update,delete,cascade_delete} \
+                 (--params ...... +)
   
   Modules:
   
