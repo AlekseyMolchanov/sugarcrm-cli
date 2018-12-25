@@ -18,7 +18,7 @@ def session(request):
 
 
 def run_command(session, cmd):
-    namespace, args = parse_args(cmd if type(cmd) is list else cmd.split(' '))
+    parser, namespace, args = parse_args(cmd if type(cmd) is list else cmd.split(' '))
     handler = namespace.func(args, action=namespace.action, session=session)
     return handler.run()
 
