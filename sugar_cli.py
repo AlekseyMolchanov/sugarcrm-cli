@@ -33,16 +33,23 @@ def parse_args(args=None):
             sp.add_argument('action', type=str,
                             help='Sugar CRM model action', choices=choices)
             sp.set_defaults(func=proxy)
+            
     namespace, args = parser.parse_known_args(args=args)
+    
     return parser, namespace, args
 
 
 if __name__ == "__main__":
     session = connect()
     parser, namespace, args = parse_args()
-    if not hasattr(namespace, 'func'):
+    if not hasattr(namespace, 'func') or not session:
+        if not session:
+            print ("\n######## Warning ########")
+            print ("You must define Environment Variables:")
+            print ("SUGAR_CRM_URL, SUGAR_CRM_USERNAME and SUGAR_CRM_PASSWORD")
+            print ("###########################\n")
         parser.print_help()
-        exit(0)
+        exit(1)
 
     handler = namespace.func(args, action=namespace.action, session=session)
     try:
