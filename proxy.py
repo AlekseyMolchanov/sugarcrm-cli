@@ -59,12 +59,12 @@ class Proxy(object):
 
         return parser.parse_args([self.action] + self.args)
 
-    def pprint(self, obj):
+    def pprint(self, obj, fn=logger.debug):
         data = dict()
         for key in self.schema:
             if hasattr(obj, key):
                 data[key] = getattr(obj, key)
-        logger.debug(pprint.pformat(data, indent=4))
+        fn(pprint.pformat(data, indent=4))
 
     @log
     def show(self, params, **kwargs):
@@ -78,13 +78,13 @@ class Proxy(object):
         items = self.cls(**params)
         results = self.session.get_entry_list(items)
         for each in results:
-            self.pprint(each)
+            self.pprint(each, fn=print)
         return results
 
     @log
     def create(self, params):
         '''
-        ./sugar_cli.py account create --billing_address_postalcode 1234 --account_type 'cli' --name "Some name" --industry "Home" --phone_office  +4234234234 --billing_address_city Moscow --billing_address_street "red 1"
+        ./sugar_cli.py account create --billing_address_postalcode 1234 --account_type 'Integrator' --name "Some name" --industry "Home" --phone_office  +4234234234 --billing_address_city Moscow --billing_address_street "red 1"
         '''
         obj = self.cls(**params)
         result = self.session.set_entry(obj)
@@ -163,3 +163,12 @@ class Proxy(object):
             
         else:
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
+
+    @log
+    def cascade_create(self, params):
+
+        count = params.get('count')
+        for each in range(count):
+            params = self.cls.fake_data()
+            obj = self.create(params)
+            

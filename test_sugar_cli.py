@@ -23,12 +23,6 @@ def run_command(session, cmd):
     return handler.run()
 
 
-def __test_get_module_fields(state, session):
-    from pprint import pprint
-    pprint(session.get_module_fields('Accounts')['module_fields'])
-    exit()
-
-
 def test_connect(state, session):
     assert state
     assert session
