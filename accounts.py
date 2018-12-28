@@ -8,6 +8,9 @@ from meetings import MeetingProxy
 from calls import CallProxy
 from opportunity import OpportunityProxy
 
+from collections import namedtuple
+Relation = namedtuple('Relation', ['cls', 'field'])
+
 account_type_choices = ['Analyst', 'Competitor', 'Customer', 'Integrator',
                         'Investor', 'Other', 'Partner', 'Press', 'Prospect', 'Reseller']
 

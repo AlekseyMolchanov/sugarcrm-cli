@@ -11,7 +11,7 @@ class Proxy(object):
 
     relations = []
 
-    def __init__(self, args, action=None, session=None):
+    def __init__(self, args=None, action=None, session=None):
         self.args = args
         self.action = action
         self.session = session
@@ -27,6 +27,10 @@ class Proxy(object):
 
     @log
     def parse_args(self):
+
+        if not self.args:
+            raise ValueError("{} not has args" % self.__class__.__name__)
+
         parser = argparse.ArgumentParser()
         subparsers = parser.add_subparsers()
 
