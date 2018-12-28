@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 from sugarcrm import Contact
-from proxy import Proxy
+from proxy import Proxy, Relation
 from meetings import MeetingProxy
 from calls import CallProxy
 
@@ -28,4 +28,7 @@ schema = dict(
 class ContactProxy(Proxy):
     cls = Contact
     schema = schema
-    relations = [MeetingProxy, CallProxy]
+    relations = [
+        Relation(MeetingProxy, 'parent_id', 'parent_type'), 
+        Relation(CallProxy, 'parent_id', 'parent_type')
+    ]

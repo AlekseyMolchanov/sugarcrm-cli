@@ -2,9 +2,12 @@
 # encoding: utf-8
 
 import argparse
-
+from collections import namedtuple
 from logger import log, logger
 import pprint
+
+
+Relation = namedtuple('Relation', ['related', 'id_field', 'module_field'])
 
 
 class Proxy(object):
@@ -151,15 +154,16 @@ class Proxy(object):
         current = self.session.get_entry(self.cls.module, _id)
         if current:
             for relation in self.relations:
+                module = relation.related.cls.module
 
                 link = dict()
-                link[relation.cls.module] = ['id']
+                link[module] = ['id']
+                
                 linked = self.session.get_entry(self.cls.module, current.id, links=link)
                 if linked:
-                    if hasattr(linked, relation.cls.module.lower()):
-                        for link in getattr(linked, relation.cls.module.lower()):
-                            rel = relation(None, action='cascade_delete', session=self.session)
-                            rel.cascade_delete(dict(id=link.id))
+                    for link in getattr(linked, module.lower(), []):
+                        rel = relation(None, action='cascade_delete', session=self.session)
+                        rel.cascade_delete(dict(id=link.id))
             
             current.deleted = True
             current = self.session.set_entry(current)

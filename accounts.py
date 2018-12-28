@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from proxy import Proxy
+from proxy import Proxy, Relation
 from sugarcrm import Account
 from contacts import ContactProxy
 from meetings import MeetingProxy
 from calls import CallProxy
 from opportunity import OpportunityProxy
 
-from collections import namedtuple
-Relation = namedtuple('Relation', ['cls', 'field'])
 
 account_type_choices = ['Analyst', 'Competitor', 'Customer', 'Integrator',
                         'Investor', 'Other', 'Partner', 'Press', 'Prospect', 'Reseller']
@@ -40,4 +38,9 @@ schema = dict(
 class AccountProxy(Proxy):
     cls = Account
     schema = schema
-    relations = [ContactProxy, MeetingProxy, CallProxy, OpportunityProxy]
+    relations = [
+        Relation(ContactProxy, 'account_id'), 
+        Relation(MeetingProxy, 'parent_id', 'parent_type'), 
+        Relation(CallProxy, 'parent_id', 'parent_type'), 
+        Relation(OpportunityProxy, 'account_id')
+    ]
