@@ -39,8 +39,8 @@ class AccountProxy(Proxy):
     cls = Account
     schema = schema
     relations = [
-        Relation(ContactProxy, 'account_id'), 
+        Relation(ContactProxy, 'account_id', None), 
         Relation(MeetingProxy, 'parent_id', 'parent_type'), 
         Relation(CallProxy, 'parent_id', 'parent_type'), 
-        Relation(OpportunityProxy, 'account_id')
+        Relation(OpportunityProxy, 'account_id', None)
     ]

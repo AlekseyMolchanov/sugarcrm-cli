@@ -19,6 +19,9 @@ class Proxy(object):
         self.action = action
         self.session = session
 
+    def fake_data(index, parent=None):
+        raise Warning("Not implemented")
+
     def run(self):
         namespace = self.parse_args()
         _params = vars(namespace)
@@ -45,6 +48,9 @@ class Proxy(object):
         
         cascade_delete = subparsers.add_parser('cascade_delete')
         cascade_delete.add_argument( '--id', type=str, help='object giud for cascade delete', required=True)
+
+        cascade_create = subparsers.add_parser('cascade_create')
+        cascade_create.add_argument( '--count', type=int, help='Count of items to generate', required=True)
 
         show = subparsers.add_parser('show')
         for param, options in self.schema.items():
@@ -145,7 +151,7 @@ class Proxy(object):
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
 
     @log
-    def cascade_delete(self, params):
+    def cascade_delete(self, params, action = 'cascade_delete'):
         '''
         cascade delete by id
         ./sugar_cli.py account cascade_delete --id=a3a0f97a-749d-f1a6-9a08-5bf5d7d63de1
@@ -155,16 +161,25 @@ class Proxy(object):
         if current:
             for relation in self.relations:
                 module = relation.related.cls.module
-
-                link = dict()
-                link[module] = ['id']
+                links = dict()
                 
-                linked = self.session.get_entry(self.cls.module, current.id, links=link)
-                if linked:
-                    for link in getattr(linked, module.lower(), []):
-                        rel = relation(None, action='cascade_delete', session=self.session)
+                if not relation.module_field: # linked by link field
+                    links[module] = ['id']
+                    
+                    linked = self.session.get_entry(self.cls.module, current.id, links=links)
+                    if linked:
+                        for link in getattr(linked, module.lower(), []):
+                            rel = relation.related(None, action=action, session=self.session)
+                            rel.cascade_delete(dict(id=link.id))
+                
+                else: # linked by select field
+                    links[relation.id_field] = _id
+                    links[relation.module_field] = self.cls.module # may be it is over
+                    linked = self.session.get_entry_list( relation.related.cls(**links) )
+                    for link in linked:
+                        rel = relation.related(None, action=action, session=self.session)
                         rel.cascade_delete(dict(id=link.id))
-            
+
             current.deleted = True
             current = self.session.set_entry(current)
             return True
@@ -173,10 +188,19 @@ class Proxy(object):
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
 
     @log
-    def cascade_create(self, params):
+    def cascade_create(self, params, action='cascade_create', parent=None):
 
         count = params.get('count')
-        for each in range(count):
-            params = self.cls.fake_data()
+        for index, each in enumerate(range(count)):
+            params = self.fake_data(index, parent=parent)
             obj = self.create(params)
-            
+            for relation in self.relations:
+                params = dict(count=count)
+                params[relation.id_field] = obj.id
+
+                if relation.module_field:
+                    params[relation.module_field] = self.cls.module
+
+                rel = relation.related(None, action=action, session=self.session)
+                rel.cascade_create(params)
+        return True
