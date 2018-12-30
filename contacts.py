@@ -5,6 +5,7 @@ from sugarcrm import Contact
 from proxy import Proxy, Relation
 from meetings import MeetingProxy
 from calls import CallProxy
+from tasks import TaskProxy
 
 
 schema = dict(
@@ -30,5 +31,7 @@ class ContactProxy(Proxy):
     schema = schema
     relations = [
         Relation(MeetingProxy, 'parent_id', 'parent_type'), 
-        Relation(CallProxy, 'parent_id', 'parent_type')
+        Relation(CallProxy, 'parent_id', 'parent_type'),
+        Relation(TaskProxy, 'contact_id', None),
+        Relation(TaskProxy, 'parent_id', 'parent_type')
     ]

@@ -145,7 +145,7 @@ def test_opportunity_create_for_account(state, session):
     cmd = [
         'opportunity',
         'create',
-        '--name', 'opportunity',
+        '--name', 'some my opportunity',
         '--date_closed', '2018-12-23T12:00:00-00:00',
         '--account_id', state.get('contact').id,
         '--amount', '100500'
@@ -153,6 +153,40 @@ def test_opportunity_create_for_account(state, session):
     obj = run_command(session, cmd)
     assert obj
     state['opportunity'] = obj
+
+
+def test_task_create_for_account(state, session):
+    cmd = [
+        'task',
+        'create',
+        '--name', 'it is account task',
+        '--description', 'description task',
+        '--priority','Low',
+        '--date_start', '2018-12-23T12:00:00-00:00',
+        '--date_end', '2018-12-23T13:00:00-00:00',
+        '--parent_id', state.get('account').id,
+        '--parent_type', state.get('account').module
+    ]
+    obj = run_command(session, cmd)
+    assert obj
+    state['account_task'] = obj
+
+def test_task_create_for_opportunity(state, session):
+    cmd = [
+        'task',
+        'create',
+        '--name', 'it is opportunity task',
+        '--description', 'description task',
+        '--priority','High',
+        '--date_start', '2018-12-23T12:00:00-00:00',
+        '--date_end', '2018-12-23T13:00:00-00:00',
+        '--parent_id', state.get('opportunity').id,
+        '--parent_type', state.get('opportunity').module
+    ]
+    obj = run_command(session, cmd)
+    assert obj
+    state['opportunity_task'] = obj
+
 
 def test_contact_delete(state, session):
     _id = state.get('contact').id
@@ -186,3 +220,7 @@ def test_account_cascade_delete(state, session):
 
     _id = state.get('account').id
     assert run_command(session, 'account cascade_delete --id %s' % _id)
+
+
+def test_account_cascade_create(state, session):
+    assert run_command(session, 'account cascade_create --count=10')

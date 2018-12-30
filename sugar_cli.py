@@ -10,6 +10,7 @@ from contacts import ContactProxy
 from meetings import MeetingProxy
 from calls import CallProxy
 from opportunity import OpportunityProxy
+from tasks import TaskProxy
 
 
 MODULES = {
@@ -17,7 +18,8 @@ MODULES = {
     'contact': ContactProxy,
     'call': CallProxy,
     'meeting': MeetingProxy,
-    'opportunity': OpportunityProxy
+    'opportunity': OpportunityProxy,
+    'task': TaskProxy,
 }
 
 class _HelpAction(argparse._HelpAction):

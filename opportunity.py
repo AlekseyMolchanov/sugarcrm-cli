@@ -2,7 +2,11 @@
 # encoding: utf-8
 
 from sugarcrm import Opportunity
-from proxy import Proxy
+from proxy import Proxy, Relation
+
+from tasks import TaskProxy
+from calls import CallProxy
+from meetings import MeetingProxy
 
 
 schema = dict(
@@ -20,4 +24,8 @@ schema = dict(
 class OpportunityProxy(Proxy):
     cls = Opportunity
     schema = schema
-    
+    relations = [
+        Relation(TaskProxy, 'parent_id', 'parent_type'),
+        Relation(CallProxy, 'parent_id', 'parent_type'),
+        Relation(MeetingProxy, 'parent_id', 'parent_type'), 
+    ]
