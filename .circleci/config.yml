@@ -28,7 +28,8 @@ jobs:
             pip install virtualenv 
             virtualenv venv
             . venv/bin/activate
-            pip install --no-cache-dir -r requirements.txt
+            pip install --upgrade --force-reinstall --no-cache-dir -r requirements.txt
+            
             pip install codecov pytest pytest-cov
               
       - save_cache:
