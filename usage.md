@@ -70,13 +70,24 @@ positional arguments:
                            --parent_id PARENT_ID 
                            [--id ID] 
 
-    opportunity           --name NAME 
+    opportunity            --name NAME 
                            --amount AMOUNT
                            --date_closed DATE_CLOSED 
                            --account_id ACCOUNT_ID
                            [--account_name ACCOUNT_NAME] 
                            [--id ID]
 
+    task                   --name NAME 
+                           --description DESCRIPTION
+                           --date_start DATE_START 
+                           --date_end DATE_END
+                           --priority {High,Low,Medium} 
+                           --contact_id CONTACT_ID
+                           --parent_id PARENT_ID 
+                           --parent_type PARENT_TYPE
+                           [--date_modified DATE_MODIFIED] 
+                           [--id ID] 
+                           
 
     UPDATE              
     Update model fields by id
@@ -98,7 +109,8 @@ positional arguments:
 
     CASCADE_CREATE      
     Cascade create fake data objects
-    >./sugar_cli.py <Module> cascade_create
+    the following arguments are required: --count 
+    >./sugar_cli.py <Module> cascade_create --count=<int>
 
 
 optional arguments:
