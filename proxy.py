@@ -19,8 +19,8 @@ class Proxy(object):
         self.action = action
         self.session = session
 
-    def fake_data(index, parent=None):
-        raise Warning("Not implemented")
+    def fake_data(self, params):
+        raise Warning("fake_data Not implemented in [{}]".format(self.__class__.__name__))
 
     def run(self):
         namespace = self.parse_args()
@@ -35,7 +35,7 @@ class Proxy(object):
     def parse_args(self):
 
         if not self.args:
-            raise ValueError("{} not has args" % self.__class__.__name__)
+            raise ValueError("{} not has args".format(self.__class__.__name__))
 
         parser = argparse.ArgumentParser()
         subparsers = parser.add_subparsers()
@@ -188,19 +188,23 @@ class Proxy(object):
             raise ValueError('Not found {} [{}]'.format(self.cls.module, _id))
 
     @log
-    def cascade_create(self, params, action='cascade_create', parent=None):
+    def cascade_create(self, params):
+        
+        result = []
 
         count = params.get('count')
         for index, each in enumerate(range(count)):
-            params = self.fake_data(index, parent=parent)
-            obj = self.create(params)
+            
+            obj = self.create(self.fake_data(params))
+            result.append(obj)
             for relation in self.relations:
+                
                 params = dict(count=count)
                 params[relation.id_field] = obj.id
-
                 if relation.module_field:
                     params[relation.module_field] = self.cls.module
 
-                rel = relation.related(None, action=action, session=self.session)
+                rel = relation.related(None, action='cascade_create', session=self.session)
                 rel.cascade_create(params)
-        return True
+        
+        return result

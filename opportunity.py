@@ -8,6 +8,7 @@ from tasks import TaskProxy
 from calls import CallProxy
 from meetings import MeetingProxy
 
+import generate
 
 schema = dict(
     id=dict(help='Opportunity ID', required_in=[
@@ -29,3 +30,17 @@ class OpportunityProxy(Proxy):
         Relation(CallProxy, 'parent_id', 'parent_type'),
         Relation(MeetingProxy, 'parent_id', 'parent_type'), 
     ]
+    
+    def fake_data(self, params):
+
+        _, date_closed = generate.generate_dates_range()
+        now = generate.generate_now()
+        
+        _id = id(self)
+
+        return dict(
+            name="Opportunity #{}".format(_id),
+            date_closed=date_closed, # yyyy-mm-ddThh:mm:ss-00:00
+            amount=1,                      
+            account_id=params.get('account_id')
+        )

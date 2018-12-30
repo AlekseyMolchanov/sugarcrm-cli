@@ -7,6 +7,7 @@ from meetings import MeetingProxy
 from calls import CallProxy
 from tasks import TaskProxy
 
+import generate
 
 schema = dict(
     first_name=dict(help='First Name of contact', required_in=['create']),
@@ -35,3 +36,28 @@ class ContactProxy(Proxy):
         Relation(TaskProxy, 'contact_id', None),
         Relation(TaskProxy, 'parent_id', 'parent_type')
     ]
+
+    def fake_data(self, params):
+        
+        primary_address_city = next(generate.generate_City())
+        primary_address_street = next(generate.generate_Street())
+
+        phones = generate.generate_Phone()
+
+        first_name, last_name, _, salutation = generate.generate_person()
+        
+        return dict(
+            first_name=first_name,
+            last_name=last_name,
+            title=generate.generate_Position(),
+            primary_address_street=primary_address_street,
+            primary_address_city=primary_address_city,
+            primary_address_postalcode=generate.generate_ZIP(),
+            phone_home=next(phones),
+            phone_mobile=next(phones),
+            phone_other=next(phones),
+            phone_work=next(phones),
+            salutation=salutation,
+            email1=generate.generate_Email(first_name, last_name),
+            account_id=params.get('account_id'),
+        )

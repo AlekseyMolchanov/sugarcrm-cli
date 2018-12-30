@@ -18,7 +18,8 @@ def session(request):
 
 
 def run_command(session, cmd):
-    parser, namespace, args = parse_args(cmd if type(cmd) is list else cmd.split(' '))
+    parser, namespace, args = parse_args(
+        cmd if type(cmd) is list else cmd.split(' '))
     handler = namespace.func(args, action=namespace.action, session=session)
     return handler.run()
 
@@ -141,6 +142,7 @@ def test_call_create_for_contact(state, session):
     assert obj
     state['call'] = obj
 
+
 def test_opportunity_create_for_account(state, session):
     cmd = [
         'opportunity',
@@ -161,9 +163,10 @@ def test_task_create_for_account(state, session):
         'create',
         '--name', 'it is account task',
         '--description', 'description task',
-        '--priority','Low',
+        '--priority', 'Low',
         '--date_start', '2018-12-23T12:00:00-00:00',
         '--date_end', '2018-12-23T13:00:00-00:00',
+        '--contact_id', state.get('contact').id,
         '--parent_id', state.get('account').id,
         '--parent_type', state.get('account').module
     ]
@@ -171,15 +174,17 @@ def test_task_create_for_account(state, session):
     assert obj
     state['account_task'] = obj
 
+
 def test_task_create_for_opportunity(state, session):
     cmd = [
         'task',
         'create',
         '--name', 'it is opportunity task',
         '--description', 'description task',
-        '--priority','High',
+        '--priority', 'High',
         '--date_start', '2018-12-23T12:00:00-00:00',
         '--date_end', '2018-12-23T13:00:00-00:00',
+        '--contact_id', state.get('contact').id,
         '--parent_id', state.get('opportunity').id,
         '--parent_type', state.get('opportunity').module
     ]
@@ -207,6 +212,7 @@ def test_call_delete(state, session):
     _id = state.get('call').id
     assert run_command(session, 'call delete --id %s' % _id)
 
+
 def test_opportunity_delete(state, session):
     _id = state.get('opportunity').id
     assert run_command(session, 'opportunity delete --id %s' % _id)
@@ -223,4 +229,13 @@ def test_account_cascade_delete(state, session):
 
 
 def test_account_cascade_create(state, session):
-    assert run_command(session, 'account cascade_create --count=10')
+    objs = run_command(session, 'account cascade_create --count=1')
+    assert objs
+    state['account_cascade_create'] = objs
+
+
+def test_account_cascade_delete_cleanup(state, session):
+    if 'account_cascade_create' in state:
+        for each in state['account_cascade_create']:
+            assert run_command(
+                session, 'account cascade_delete --id %s' % each.id)

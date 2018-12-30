@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import generate
 from proxy import Proxy, Relation
 from sugarcrm import Account
 from contacts import ContactProxy
@@ -13,10 +14,10 @@ account_type_choices = ['Analyst', 'Competitor', 'Customer', 'Integrator',
                         'Investor', 'Other', 'Partner', 'Press', 'Prospect', 'Reseller']
 
 account_industry_choices = [
-    'Apparel','Banking','Biotechnology','Chemicals','Communications','Construction','Consulting','Education',
-    'Electronics','Energy','Engineering','Entertainment','Environmental','Finance','Government','Healthcare',
-    'Hospitality','Insurance','Machinery','Manufacturing','Media','Not For Profit','Other','Recreation',
-    'Retail','Shipping','Technology','Telecommunications','Transportation','Utilities'
+    'Apparel', 'Banking', 'Biotechnology', 'Chemicals', 'Communications', 'Construction', 'Consulting', 'Education',
+    'Electronics', 'Energy', 'Engineering', 'Entertainment', 'Environmental', 'Finance', 'Government', 'Healthcare',
+    'Hospitality', 'Insurance', 'Machinery', 'Manufacturing', 'Media', 'Not For Profit', 'Other', 'Recreation',
+    'Retail', 'Shipping', 'Technology', 'Telecommunications', 'Transportation', 'Utilities'
 ]
 
 schema = dict(
@@ -39,8 +40,26 @@ class AccountProxy(Proxy):
     cls = Account
     schema = schema
     relations = [
-        Relation(ContactProxy, 'account_id', None), 
-        Relation(MeetingProxy, 'parent_id', 'parent_type'), 
-        Relation(CallProxy, 'parent_id', 'parent_type'), 
+        Relation(ContactProxy, 'account_id', None),
+        Relation(MeetingProxy, 'parent_id', 'parent_type'),
+        Relation(CallProxy, 'parent_id', 'parent_type'),
         Relation(OpportunityProxy, 'account_id', None)
     ]
+
+    def fake_data(self, params):
+        
+        name = next(generate.generate_CompanyName())
+        phone_office = next(generate.generate_Phone())
+        billing_address_city = next(generate.generate_City())
+        billing_address_street = next(generate.generate_Street())
+        
+        return dict(
+            billing_address_postalcode=generate.generate_ZIP(),
+            billing_address_country=generate.generate_Country(),
+            account_type=generate.generate_AccountType(),
+            name=name,
+            industry=generate.generate_Industry(),
+            phone_office=phone_office,
+            billing_address_city=billing_address_city,
+            billing_address_street=billing_address_street
+        )
