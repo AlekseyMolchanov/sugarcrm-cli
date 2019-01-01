@@ -34,9 +34,7 @@ class Proxy(object):
     @log
     def parse_args(self):
 
-        if not self.args:
-            raise ValueError("{} not has args".format(self.__class__.__name__))
-
+        
         parser = argparse.ArgumentParser()
         subparsers = parser.add_subparsers()
 
