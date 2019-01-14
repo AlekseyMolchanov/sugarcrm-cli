@@ -1,5 +1,5 @@
 usage: sugar_cli [--help] {account,contact,call,meeting,opportunity} \
-                          {show,get,create,update,delete,cascade_create,cascade_delete} \
+                          {show,get,create,update,delete,cascade_create,cascade_delete,fields} \
                           --required=arguments [--optional=arguments]
 
 positional arguments <Module>:
@@ -12,7 +12,7 @@ positional arguments <Module>:
     opportunity         Module: Opportunities
 
 positional arguments:
-  {show,get,create,update,delete,cascade_create,cascade_delete}
+  {show,get,create,update,delete,cascade_create,cascade_delete,fields}
                         
     show                Show action: show all items or search by some fild value
     >./sugar_cli.py <Module> show [--optional=arguments]
@@ -111,6 +111,15 @@ positional arguments:
     Cascade create fake data objects
     the following arguments are required: --count 
     >./sugar_cli.py <Module> cascade_create --count=<int>
+
+    FIELDS
+    Get information abount module model, 
+    get fields by type: default module_fields
+    >./sugar_cli.py <Module> fields
+    >./sugar_cli.py <Module> fields --type=module_fields
+    get field description
+    >./sugar_cli.py <Module> fields --type=<str> --field contact_id
+     
 
 
 optional arguments:

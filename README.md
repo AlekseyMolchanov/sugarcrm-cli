@@ -41,3 +41,4 @@
     * delete
     * cascade_create
     * cascade_delete
+    * fields

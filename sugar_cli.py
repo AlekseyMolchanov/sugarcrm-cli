@@ -37,7 +37,7 @@ def parse_args(args=None):
     for module, proxy in MODULES.items():
         if proxy:
             sp = subparsers.add_parser(module, help="Module: %s" % proxy.cls.module)
-            choices = ['show', 'get', 'create',
+            choices = ['show', 'get', 'create', 'fields',
                        'update', 'delete', 'cascade_create', 'cascade_delete']
             sp.add_argument('action', type=str,
                             help='Available module action', choices=choices)

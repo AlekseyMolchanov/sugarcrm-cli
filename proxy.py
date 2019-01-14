@@ -38,6 +38,10 @@ class Proxy(object):
         parser = argparse.ArgumentParser()
         subparsers = parser.add_subparsers()
 
+        fields = subparsers.add_parser('fields')
+        fields.add_argument('--type', type=str, help='fileds list name', required=False, default='module_fields')
+        fields.add_argument('--field', type=str, help='filed to explain', required=False, default=None)
+
         get = subparsers.add_parser('get')
         get.add_argument('--id', type=str, help='object giud', required=True)
 
@@ -76,6 +80,20 @@ class Proxy(object):
             if hasattr(obj, key):
                 data[key] = getattr(obj, key)
         fn(pprint.pformat(data, indent=4))
+
+    @log
+    def fields(self, params, **kwargs):
+        _type = params.get('type')
+        _field = params.get('field')
+        _data = self.session.get_module_fields(self.cls.module)
+        if _type in _data:
+            _data = _data.get(_type)
+            if _field in _data:
+                print(_data.get(_field))
+            else:
+                print(_data.keys())
+        else:
+            print(_data.keys())
 
     @log
     def show(self, params, **kwargs):
